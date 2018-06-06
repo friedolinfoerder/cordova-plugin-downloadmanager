@@ -30,11 +30,11 @@ public class DownloadManager extends CordovaPlugin {
             }
             String filename = null;
             if(options.has("filename")) {
-                token = options.getString("filename");
+                filename = options.getString("filename");
             }
             String description = "Download";
             if(options.has("description")) {
-                token = options.getString("description");
+                description = options.getString("description");
             }
             this.startDownload(message, token, filename, description, callbackContext);
             return true;
