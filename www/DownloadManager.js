@@ -1,5 +1,6 @@
 var exec = require('cordova/exec');
 
-exports.download = function(arg0, success, error) {
-    exec(success, error, "DownloadManager", "download", [arg0]);
+exports.download = function(url, options, success, error) {
+    options = options || {};
+    exec(success, error, "DownloadManager", "download", [url, options]);
 };
