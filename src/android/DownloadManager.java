@@ -78,8 +78,8 @@ public class DownloadManager extends CordovaPlugin {
             }
             
             //set mime type
-            if(mimetype != null && !mimetype.isEmpty()) {
-                request.setMimeType(mimetype);
+            if(mimeType != null && !mimeType.isEmpty()) {
+                request.setMimeType(mimeType);
             }
             
             long downloadReference = downloadManager.enqueue(request);
