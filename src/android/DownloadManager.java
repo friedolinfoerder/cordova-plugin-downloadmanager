@@ -32,6 +32,10 @@ public class DownloadManager extends CordovaPlugin {
             if(options.has("filename")) {
                 filename = options.getString("filename");
             }
+            String title = null;
+            if(options.has("title")) {
+                title = options.getString("title");
+            }
             String description = "Download";
             if(options.has("description")) {
                 description = options.getString("description");
@@ -40,13 +44,13 @@ public class DownloadManager extends CordovaPlugin {
             if(options.has("mimeType")) {
                 mimeType = options.getString("mimeType");
             }
-            this.startDownload(message, token, filename, description, mimeType, callbackContext);
+            this.startDownload(message, token, filename, title, description, mimeType, callbackContext);
             return true;
         }
         return false;
     }
 
-    private void startDownload(String message, String token, String filename, String description, String mimeType, CallbackContext callbackContext) {
+    private void startDownload(String message, String token, String filename, String title, String description, String mimeType, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
             if(filename == null) {
                 filename = message.substring(message.lastIndexOf("/")+1, message.length());
@@ -63,10 +67,17 @@ public class DownloadManager extends CordovaPlugin {
             request.setAllowedNetworkTypes(android.app.DownloadManager.Request.NETWORK_WIFI | android.app.DownloadManager.Request.NETWORK_MOBILE);
             //Set whether this download may proceed over a roaming connection.
             request.setAllowedOverRoaming(true);
-            //Set the title of this download, to be displayed in notifications (if enabled).
-            request.setTitle(filename);
+            
+            // Set the title of this download, to be displayed in notifications (if enabled).
+            if(title) {
+                request.setTitle(title);
+            } else {
+                request.setTitle(filename);
+            }
+            
             //Set a description of this download, to be displayed in notifications (if enabled)
             request.setDescription(description);
+            
             //Set the local destination for the downloaded file to a path within the application's external files directory            
             request.setDestinationInExternalFilesDir(cordova.getActivity().getApplicationContext(), Environment.DIRECTORY_DOWNLOADS, filename);
             //Set visiblity after download is complete
