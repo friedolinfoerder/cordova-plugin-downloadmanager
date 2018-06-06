@@ -37,7 +37,7 @@ public class DownloadManager extends CordovaPlugin {
                 description = options.getString("description");
             }
             String mimeType = null;
-            if(options.has("description")) {
+            if(options.has("mimeType")) {
                 mimeType = options.getString("mimeType");
             }
             this.startDownload(message, token, filename, description, mimeType, callbackContext);
