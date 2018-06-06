@@ -36,13 +36,17 @@ public class DownloadManager extends CordovaPlugin {
             if(options.has("description")) {
                 description = options.getString("description");
             }
-            this.startDownload(message, token, filename, description, callbackContext);
+            String mimeType = null;
+            if(options.has("description")) {
+                mimeType = options.getString("mimeType");
+            }
+            this.startDownload(message, token, filename, description, mimeType, callbackContext);
             return true;
         }
         return false;
     }
 
-    private void startDownload(String message, String token, String filename, String description, CallbackContext callbackContext) {
+    private void startDownload(String message, String token, String filename, String description, String mimeType, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
             if(filename == null) {
                 filename = message.substring(message.lastIndexOf("/")+1, message.length());
@@ -71,6 +75,11 @@ public class DownloadManager extends CordovaPlugin {
             //add request header
             if(token != null && !token.isEmpty()) {
                 request.addRequestHeader("Authorization", "Bearer " + token);
+            }
+            
+            //set mime type
+            if(mimetype != null && !mimetype.isEmpty()) {
+                request.setMimeType(mimetype);
             }
             
             long downloadReference = downloadManager.enqueue(request);
