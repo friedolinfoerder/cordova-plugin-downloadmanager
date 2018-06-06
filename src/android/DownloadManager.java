@@ -23,13 +23,18 @@ public class DownloadManager extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (action.equals("download")) {
             String message = args.getString(0);
-            this.startDownload(message, callbackContext);
+            String token = null;
+            if(args.size() > 1) {
+                JsonObject options = args.getJsonObject(1);
+                token = options.getJsonString('token');
+            }
+            this.startDownload(message, token, callbackContext);
             return true;
         }
         return false;
     }
 
-    private void startDownload(String message, CallbackContext callbackContext) {
+    private void startDownload(String message, String token, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
             String filename = message.substring(message.lastIndexOf("/")+1, message.length());
             try {
@@ -53,6 +58,12 @@ public class DownloadManager extends CordovaPlugin {
             request.setDestinationInExternalFilesDir(cordova.getActivity().getApplicationContext(), Environment.DIRECTORY_DOWNLOADS, filename);
             //Set visiblity after download is complete
             request.setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            
+            //add request header
+            if(token != null && !token.isEmpty()) {
+                request.addRequestHeader("Authorization", "Bearer " + token);
+            }
+            
             long downloadReference = downloadManager.enqueue(request);
             callbackContext.success(message);
         } else {
