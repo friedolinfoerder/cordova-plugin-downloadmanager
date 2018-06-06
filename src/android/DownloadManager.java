@@ -24,9 +24,9 @@ public class DownloadManager extends CordovaPlugin {
         if (action.equals("download")) {
             String message = args.getString(0);
             String token = null;
-            if(args.size() > 1) {
-                JsonObject options = args.getJsonObject(1);
-                token = options.getJsonString("token");
+            if(args.length() > 1) {
+                JSONObject options = args.getJSONObject(1);
+                token = options.getString("token");
             }
             this.startDownload(message, token, callbackContext);
             return true;
