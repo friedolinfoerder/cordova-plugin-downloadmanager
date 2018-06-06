@@ -24,25 +24,32 @@ public class DownloadManager extends CordovaPlugin {
         if (action.equals("download")) {
             String message = args.getString(0);
             String token = null;
-            if(args.length() > 1) {
-                JSONObject options = args.getJSONObject(1);
-                if(options.has("token")) {
-                    token = options.getString("token");
-                }
+            JSONObject options = args.getJSONObject(1);
+            if(options.has("token")) {
+                token = options.getString("token");
             }
-            this.startDownload(message, token, callbackContext);
+            String filename = null;
+            if(options.has("filename")) {
+                token = options.getString("filename");
+            }
+            String description = "Download";
+            if(options.has("description")) {
+                token = options.getString("description");
+            }
+            this.startDownload(message, token, filename, description, callbackContext);
             return true;
         }
         return false;
     }
 
-    private void startDownload(String message, String token, CallbackContext callbackContext) {
+    private void startDownload(String message, String token, String filename, String description, CallbackContext callbackContext) {
         if (message != null && message.length() > 0) {
-            String filename = message.substring(message.lastIndexOf("/")+1, message.length());
+            if(filename == null) {
+                filename = message.substring(message.lastIndexOf("/")+1, message.length());
+            }
             try {
                 filename = URLDecoder.decode(filename,"UTF-8");
             } catch (UnsupportedEncodingException e) {
-
                 callbackContext.error("Error in converting filename");
             }
             android.app.DownloadManager downloadManager = (android.app.DownloadManager) cordova.getActivity().getApplicationContext().getSystemService(Context.DOWNLOAD_SERVICE);            
@@ -51,11 +58,11 @@ public class DownloadManager extends CordovaPlugin {
             //Restrict the types of networks over which this download may proceed.
             request.setAllowedNetworkTypes(android.app.DownloadManager.Request.NETWORK_WIFI | android.app.DownloadManager.Request.NETWORK_MOBILE);
             //Set whether this download may proceed over a roaming connection.
-            request.setAllowedOverRoaming(false);
+            request.setAllowedOverRoaming(true);
             //Set the title of this download, to be displayed in notifications (if enabled).
             request.setTitle(filename);
             //Set a description of this download, to be displayed in notifications (if enabled)
-            request.setDescription("DataSync File Download.");
+            request.setDescription(description);
             //Set the local destination for the downloaded file to a path within the application's external files directory            
             request.setDestinationInExternalFilesDir(cordova.getActivity().getApplicationContext(), Environment.DIRECTORY_DOWNLOADS, filename);
             //Set visiblity after download is complete
